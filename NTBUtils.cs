@@ -64,7 +64,7 @@ public static class NTBUtils
   public static void ForRecursive(GameObject target, TransformAction action, bool inclParent = true)
   {
     if (inclParent) action(target.transform);
-    ForRecursiveHelper(target.transform, action);
+    NTBUtils.ForRecursiveHelper(target.transform, action);
   }
 
   private static void ForRecursiveHelper(Transform target, TransformAction action)
@@ -79,7 +79,7 @@ public static class NTBUtils
   // Mostly provided as an example
   public static void PrintAllChildren(GameObject target)
   {
-    ForRecursive(target, InternalHelpers.PrintName);
+    NTBUtils.ForRecursive(target, InternalHelpers.PrintName);
   }
   #endregion
 
