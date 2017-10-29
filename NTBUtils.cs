@@ -475,7 +475,12 @@ public class NTBMenu
   [MenuItem("Tools/NTBUtils/Show Missing Scripts")]
   static void ShowMissingScripts()
   {
-    Transform[] ts = Object.FindObjectsOfType<Transform>();
+    GameObject[] allMRootGameObjects = EditorSceneManager.GetActiveScene().GetRootGameObjects();
+    List<Transform> ts = new List<Transform>();
+    foreach (GameObject gameObject in allMRootGameObjects)
+    {
+      ts.AddRange(gameObject.GetComponentsInChildren<Transform>(true));
+    }
     List<GameObject> selection = new List<GameObject>();
     foreach (Transform t in ts)
     {
@@ -485,7 +490,9 @@ public class NTBMenu
       {
         if (c == null)
         {
+          //NTBUtils.Log("ping");
           selection.Add(t.gameObject);
+          break;
         }
       }
     }
