@@ -43,6 +43,19 @@ using UnityEditor.SceneManagement;
 
 #endif
 
+public static class GameObjectExtensions
+{
+  public static List<GameObject> GetChildren(this Transform t)
+  {
+    List<GameObject> ret = new List<GameObject>();
+    foreach (Transform ct in t)
+    {
+      ret.Add(ct.gameObject);
+    }
+    return ret;
+  }
+}
+
 public static class PropertyExtensions
 {
   public static object GetParent(this SerializedProperty prop)
@@ -371,10 +384,12 @@ public static class FAKEUSE
 
 #region DataClasses
 
-public class Pair<X, Y>
+public class Pair<X, Y> : object
 {
   public Pair()
   {
+    this.First = default(X);
+    this.Second = default(Y);
   }
 
   public Pair(X first, Y second)
@@ -385,6 +400,48 @@ public class Pair<X, Y>
 
   public X First { get; set; }
   public Y Second { get; set; }
+
+  private static readonly IEqualityComparer<X> XComparer = EqualityComparer<X>.Default;
+  private static readonly IEqualityComparer<Y> YComparer = EqualityComparer<Y>.Default;
+
+  public override int GetHashCode()
+  {
+    var hc = 0;
+    if (!object.ReferenceEquals(First, null))
+      hc = XComparer.GetHashCode(First);
+    if (!object.ReferenceEquals(Second, null))
+      hc = (hc << 3) ^ YComparer.GetHashCode(Second);
+    return hc;
+  }
+
+  public override bool Equals(object o)
+  {
+    return this.Equals(o as Pair<X, Y>);
+  }
+
+  public bool Equals(Pair<X, Y> a)
+  {
+    return a != null && a == this;
+  }
+
+  public static bool operator==(Pair<X, Y> a, Pair<X, Y> b)
+  {
+    if (object.ReferenceEquals(a, null) != object.ReferenceEquals(b, null))
+    {
+      return false;
+    }
+
+    if (a.First == null && b.First != null) return false;
+    if (a.Second == null && b.Second != null) return false;
+    return
+        a.First.Equals(b.First) &&
+        a.Second.Equals(b.Second);
+  }
+
+  public static bool operator!=(Pair<X, Y> a, Pair<X, Y> b)
+  {
+    return !(a == b);
+  }
 };
 
 public class Ref<T>
