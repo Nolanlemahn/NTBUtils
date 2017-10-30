@@ -310,6 +310,34 @@ public static partial class NTBUtils
     return false;
   }
 
+  public static string Wrap(this string text, int maxLength)
+  {
+    if (text.Length == 0) return "";
+
+    string[] words = text.Split(' ');
+    string lines = "";
+    string currentLine = "";
+
+    foreach (var currentWord in words)
+    {
+      if ((currentLine.Length > maxLength) ||
+          ((currentLine.Length + currentWord.Length) > maxLength))
+      {
+        lines += (currentLine + "\n");
+        currentLine = "";
+      }
+
+      if (currentLine.Length > 0)
+        currentLine += " " + currentWord;
+      else
+        currentLine += currentWord;
+    }
+
+    if (currentLine.Length > 0)
+      lines += (currentLine);
+    return lines;
+  }
+
   // Usage: VAR = NUMERIC.Clamp(min, max)
   public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
   {
