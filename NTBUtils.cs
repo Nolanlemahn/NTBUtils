@@ -56,6 +56,7 @@ public static class GameObjectExtensions
   }
 }
 
+#if UNITY_EDITOR
 public static class PropertyExtensions
 {
   public static object GetParent(this SerializedProperty prop)
@@ -104,6 +105,7 @@ public static class PropertyExtensions
     return enm.Current;
   }
 }
+#endif
 
 public static class ListExtensions
 {
