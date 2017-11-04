@@ -289,6 +289,14 @@ public static partial class NTBUtils
   #endregion
 
   #region OtherHelpers
+  public static void Swap<T>(ref T lhs, ref T rhs)
+  {
+    T temp;
+    temp = lhs;
+    lhs = rhs;
+    rhs = temp;
+  }
+
   // Time-related nonsense
   public static string GetTimestamp(DateTime value)
   {
