@@ -43,6 +43,40 @@ using UnityEditor.SceneManagement;
 
 #endif
 
+public class CoroutineWithCallback<T> : IEnumerator
+{
+  private IEnumerator Coroutine;
+  private Action<T> OnEnd;
+  private T Actionable;
+
+  public CoroutineWithCallback(IEnumerator Coroutine, Action<T> OnEnd, T Actionable = default(T))
+  {
+    this.Coroutine = Coroutine;
+    this.OnEnd = OnEnd;
+    this.Actionable = Actionable;
+  }
+
+  public bool MoveNext()
+  {
+    bool next = this.Coroutine.MoveNext();
+    if (!next)
+    {
+      this.OnEnd.Invoke(this.Actionable);
+    }
+    return next;
+  }
+
+  public void Reset()
+  {
+    this.Coroutine.Reset();
+  }
+
+  public object Current {
+    get { return this.Coroutine.Current; }
+    
+  }
+}
+
 public static class GameObjectExtensions
 {
   public static List<GameObject> GetChildren(this Transform t)
