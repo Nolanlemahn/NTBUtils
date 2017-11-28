@@ -43,7 +43,7 @@ using UnityEditor.SceneManagement;
 
 #endif
 
-public class CoroutineWithCallback
+public class CoroutineWithCallback : IEnumerator
 {
   private IEnumerator Coroutine;
   private Action OnEnd;
