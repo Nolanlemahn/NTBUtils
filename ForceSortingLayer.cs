@@ -37,33 +37,16 @@ using UnityEditor;
 
 [NTBUtils.OverrideExecOrder(-101)]
 [ExecuteInEditMode]
+[RequireComponent(typeof(MeshRenderer))]
 public class ForceSortingLayer : MonoBehaviour
 {
   public string SortingLayerName = "Default";
   public int SortingOrder = 0;
 
-  private string newLayer;
-
-  public void Awake()
+  void Awake()
   {
-    Renderer r = this.gameObject.GetComponent<Renderer>();
-    if (r != null)
-    {
-      r.sortingLayerName = SortingLayerName;
-      r.sortingOrder = SortingOrder;
-    }
-  }
-
-  public void ChangeLayer(string layer)
-  {
-    this.newLayer = layer;
-    NTBUtils.ForRecursive(this.gameObject, this.ObjChangeLayer, false);
-  }
-
-  void ObjChangeLayer(Transform child)
-  {
-    Renderer r = child.gameObject.GetComponent<Renderer>();
-    if(r != null) r.sortingLayerName = this.newLayer;
+    gameObject.GetComponent<MeshRenderer>().sortingLayerName = SortingLayerName;
+    gameObject.GetComponent<MeshRenderer>().sortingOrder = SortingOrder;
   }
 
   void OnGUI()
@@ -74,7 +57,7 @@ public class ForceSortingLayer : MonoBehaviour
 
 #if UNITY_EDITOR
 [CustomEditor(typeof(ForceSortingLayer))]
-//[CanEditMultipleObjects]
+[CanEditMultipleObjects]
 class ForceSortingLayerGUI : Editor
 {
   private List<string> choices;
@@ -104,16 +87,7 @@ class ForceSortingLayerGUI : Editor
       Undo.RecordObject(target, "Changed Force Sorting Layer on " + target.name);
       component.SortingLayerName = this.choices[edit_slChoice];
       component.SortingOrder = edit_soChoice;
-      component.Awake();
     }
-
-    EditorGUILayout.BeginHorizontal();
-    if (component.gameObject.GetComponent<Renderer>() != null)
-    {
-      EditorGUILayout.LabelField("Perceived Layer: ");
-      EditorGUILayout.LabelField(component.gameObject.GetComponent<Renderer>().sortingLayerName);
-    }
-    EditorGUILayout.EndHorizontal();
   }
 }
 #endif

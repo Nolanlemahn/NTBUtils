@@ -46,12 +46,17 @@ using UnityEditor.SceneManagement;
 public class CoroutineWithCallback : IEnumerator
 {
   private IEnumerator Coroutine;
-  private Action OnEnd;
+  private Action[] OnEnds;
 
   public CoroutineWithCallback(IEnumerator Coroutine, Action OnEnd)
   {
     this.Coroutine = Coroutine;
-    this.OnEnd = OnEnd;
+    this.OnEnds = new Action[]{OnEnd};
+  }
+  public CoroutineWithCallback(IEnumerator Coroutine, Action[] OnEnds)
+  {
+    this.Coroutine = Coroutine;
+    this.OnEnds = OnEnds;
   }
 
   public bool MoveNext()
@@ -59,7 +64,10 @@ public class CoroutineWithCallback : IEnumerator
     bool next = this.Coroutine.MoveNext();
     if (!next)
     {
-      this.OnEnd.Invoke();
+      foreach (Action action in this.OnEnds)
+      {
+        action.Invoke();
+      }
     }
     return next;
   }
@@ -191,7 +199,7 @@ public static class ListExtensions
   {
     ListExtensions.Resize(list, sz, default(T));
   }
-  
+
   public static void UShuffle<T>(this IList<T> list)
   {
     int count = list.Count;
