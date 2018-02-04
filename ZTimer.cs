@@ -33,7 +33,7 @@ using System;
 public class ZTimer
 {
   private bool Ticking = false;
-  private float StartAt;
+  public float StartAt;
   private float Remaining;
 
   public delegate void ZTWhenDone();
