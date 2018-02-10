@@ -15,8 +15,8 @@ public class ProximityPositionComparer : IComparer
 
   public int Compare(object x, object y)
   {
-    GameObject xobj = (GameObject)x;
-    GameObject yobj = (GameObject)y;
+    Transform xobj = (Transform)x;
+    Transform yobj = (Transform)y;
 
     float distx = Vector3.Distance(this.center.transform.position,
       xobj.transform.position);
