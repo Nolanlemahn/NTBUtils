@@ -25,8 +25,8 @@ class NotescriptGUI : Editor
 
     if (oldNote != newNote)
     {
-      component.Note = newNote;
       Undo.RecordObject(target, "Typing on Notescript on " + target.name + " [NTBU]");
+      component.Note = newNote;
     }
   }
 }
