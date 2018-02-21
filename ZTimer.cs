@@ -48,7 +48,6 @@ public class ZTimer
     }
     if (this.Remaining <= 0)
     {
-      this.Ticking = false;
       if (this.del != null)
       {
         this.del();
@@ -90,6 +89,11 @@ public class ZTimer
     this.Ticking = true;
   }
 
+  public void Stop()
+  {
+    this.Ticking = false;
+  }
+
   public bool Running()
   {
     return this.Ticking;
@@ -97,8 +101,9 @@ public class ZTimer
 
   public bool Done()
   {
-    if (this.Remaining <= 0)
+    if (this.Ticking && this.Remaining <= 0)
     {
+      this.Ticking = false;
       return true;
     }
     return false;
