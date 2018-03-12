@@ -39,9 +39,10 @@ public static partial class NTBUtils
     public static float Range(float min, float max)
     {
       System.Random random = NTBUtils.Random.PR.gen;
-      double mantissa = (random.NextDouble() * 2.0) - 1.0;
-      double exponent = Math.Pow(2.0, random.Next(-126, 128));
-      return (float)(mantissa * exponent);
+      return (float)(random.NextDouble() * (max - min) + min);
+      //double mantissa = (random.NextDouble() * 2.0) - 1.0;
+      //double exponent = Math.Pow(2.0, random.Next(-126, 128));
+      //return (float)(mantissa * exponent);
     }
 
     public static void Shuffle<T>(IList<T> list)
