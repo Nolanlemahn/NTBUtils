@@ -40,6 +40,12 @@ public class ZTimer
 
   private ZTWhenDone del = null;
 
+  public ZTimer() {}
+  public ZTimer(float startTime)
+  {
+    this.Start(startTime);
+  }
+
   public void Tick(float dt)
   {
     if (this.Ticking && this.Remaining > 0.0)
@@ -97,6 +103,12 @@ public class ZTimer
   public bool Running()
   {
     return this.Ticking;
+  }
+
+  public bool DoneOrNotTicking()
+  {
+    return (!this.Ticking || this.Remaining <= 0);
+
   }
 
   public bool Done()
