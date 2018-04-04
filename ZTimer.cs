@@ -34,7 +34,7 @@ public class ZTimer
 {
   private bool Ticking = false;
   public float StartAt;
-  private float Remaining;
+  private float remainder;
 
   public delegate void ZTWhenDone();
 
@@ -48,11 +48,11 @@ public class ZTimer
 
   public void Tick(float dt)
   {
-    if (this.Ticking && this.Remaining > 0.0)
+    if (this.Ticking && this.remainder > 0.0)
     {
-      this.Remaining = this.Remaining - dt;
+      this.remainder = this.remainder - dt;
     }
-    if (this.Remaining <= 0)
+    if (this.remainder <= 0)
     {
       if (this.del != null)
       {
@@ -66,15 +66,20 @@ public class ZTimer
     this.del = func;
   }
 
+  public float Remaining()
+  {
+    return this.remainder;
+  }
+
   public float Elapsed()
   {
-    return (this.StartAt - this.Remaining);
+    return (this.StartAt - this.remainder);
   }
 
   public void Start(float time)
   {
     this.StartAt = time;
-    this.Remaining = time;
+    this.remainder = time;
     this.Ticking = true;
   }
 
@@ -85,13 +90,13 @@ public class ZTimer
       this.Start(time);
       return;
     }
-    this.Remaining += time;
+    this.remainder += time;
     this.StartAt += time;
   }
 
   public void Reset()
   {
-    this.Remaining = this.StartAt;
+    this.remainder = this.StartAt;
     this.Ticking = true;
   }
 
@@ -107,13 +112,13 @@ public class ZTimer
 
   public bool DoneOrNotTicking()
   {
-    return (!this.Ticking || this.Remaining <= 0);
+    return (!this.Ticking || this.remainder <= 0);
 
   }
 
   public bool Done()
   {
-    if (this.Ticking && this.Remaining <= 0)
+    if (this.Ticking && this.remainder <= 0)
     {
       this.Ticking = false;
       return true;
