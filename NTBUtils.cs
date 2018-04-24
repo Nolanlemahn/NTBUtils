@@ -34,6 +34,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -407,7 +408,7 @@ public static partial class NTBUtils
     return false;
   }
 
-  public static string Wrap(this string text, int maxLength)
+  public static string Wrap(this string text, int maxLength, bool rich = false)
   {
     if (text.Length == 0) return "";
 
@@ -417,8 +418,27 @@ public static partial class NTBUtils
 
     foreach (var currentWord in words)
     {
+      var wordCopy = currentWord;
+      if (rich)
+      {
+        Debug.Log("L: " + wordCopy.Length);
+        Debug.Log("W: " + wordCopy);
+        int lindex = wordCopy.IndexOf("<");
+        int rindex = wordCopy.IndexOf(">");
+        while (lindex != -1 && rindex != -1 && rindex - lindex > 0)
+        {
+          Debug.Log(lindex); 
+          Debug.Log(rindex);
+          wordCopy = Regex.Replace(wordCopy, "<.*?>", string.Empty);
+
+          lindex = wordCopy.IndexOf("<");
+          rindex = wordCopy.IndexOf(">");
+        }
+        Debug.Log("NL: " + wordCopy.Length);
+      }
+
       if ((currentLine.Length > maxLength) ||
-          ((currentLine.Length + currentWord.Length) > maxLength))
+          ((currentLine.Length + wordCopy.Length) > maxLength))
       {
         lines += (currentLine + "\n");
         currentLine = "";
