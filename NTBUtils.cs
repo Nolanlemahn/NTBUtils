@@ -421,20 +421,15 @@ public static partial class NTBUtils
       var wordCopy = currentWord;
       if (rich)
       {
-        Debug.Log("L: " + wordCopy.Length);
-        Debug.Log("W: " + wordCopy);
         int lindex = wordCopy.IndexOf("<");
         int rindex = wordCopy.IndexOf(">");
         while (lindex != -1 && rindex != -1 && rindex - lindex > 0)
         {
-          Debug.Log(lindex); 
-          Debug.Log(rindex);
           wordCopy = Regex.Replace(wordCopy, "<.*?>", string.Empty);
 
           lindex = wordCopy.IndexOf("<");
           rindex = wordCopy.IndexOf(">");
         }
-        Debug.Log("NL: " + wordCopy.Length);
       }
 
       if ((currentLine.Length > maxLength) ||
