@@ -10,6 +10,7 @@ Copyright: All content © 2017 DigiPen (USA) Corporation, all rights reserved.
 
 using System.Collections;
 using System.Collections.Generic;
+using NTBUtils;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
