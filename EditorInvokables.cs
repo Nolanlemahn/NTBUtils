@@ -72,14 +72,14 @@ public class MethodFieldDrawer : PropertyDrawer
     this.numLines = methodField.Count + 1;
 
     position.height /= numLines;
-    EditorGUI.LabelField(position, $"{label.text}", EditorStyles.centeredGreyMiniLabel);
+    EditorGUI.LabelField(position, string.Format("{0}", label.text), EditorStyles.centeredGreyMiniLabel);
     position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
     try
     {
       foreach (var method in methodField)
       {
-        if (GUI.Button(position, $"{method.Method.Name}()"))
+        if (GUI.Button(position, string.Format("{0}()", method.Method.Name)))
         {
           method.Invoke();
         }
