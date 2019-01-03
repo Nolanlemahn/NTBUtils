@@ -28,59 +28,43 @@ shall not be used in advertising or otherwise to promote the sale, use or other
 dealings in this Software without prior written authorization.
 */
 
-using System.Collections;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
-namespace NTBUtils
+public class SingletonScriptableObject<T> : ScriptableObject where T : ScriptableObject
 {
-    public class ProximityPositionComparer<T> : IComparer
-        where T : Component
+    private static T _instance = null;
+    public static string PathForNonpreloaded = ""; //Hide this in inheritance if desired
+
+    public static T Get()
     {
-        private readonly Transform center;
-
-        public ProximityPositionComparer(Transform center)
+        if (!_instance)
         {
-            this.center = center;
+            if (Application.isEditor)
+            {
+                #if UNITY_EDITOR
+                // preloadeds aren't necessarily preloaded in editor
+                var objIDs = AssetDatabase.FindAssets("t:" + typeof(T).Name);
+                _instance = AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(objIDs[0]));
+                return _instance;
+                #endif
+            }
+            else
+            {
+                T[] objs = Resources.FindObjectsOfTypeAll<T>();
+                if (objs.Length == 0)
+                {
+                    _instance = Resources.Load<T>(PathForNonpreloaded);
+                    return _instance;
+                }
+                else
+                {
+                    return objs[0];
+                }
+            }
         }
-
-        public int Compare(object x, object y)
-        {
-            var xobj = (T) x;
-            var yobj = (T) y;
-
-            var distx = Vector3.Distance(this.center.transform.position,
-                xobj.transform.position);
-            var disty = Vector3.Distance(this.center.transform.position,
-                yobj.transform.position);
-
-            if (distx < disty) return -1;
-            if (distx > disty) return 1;
-            return 0; //yeah, right.
-        }
-    }
-
-    public class ProximityPositionComparer : IComparer
-    {
-        private readonly Transform center;
-
-        public ProximityPositionComparer(Transform center)
-        {
-            this.center = center;
-        }
-
-        public int Compare(object x, object y)
-        {
-            var xobj = (RaycastHit) x;
-            var yobj = (RaycastHit) y;
-
-            var distx = Vector3.Distance(this.center.transform.position,
-                xobj.transform.position);
-            var disty = Vector3.Distance(this.center.transform.position,
-                yobj.transform.position);
-
-            if (distx < disty) return -1;
-            if (distx > disty) return 1;
-            return 0; //yeah, right.
-        }
+        return _instance;
     }
 }
