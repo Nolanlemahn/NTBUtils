@@ -656,6 +656,17 @@ namespace NTBUtils
     }
   }
 
+  [Serializable]
+  public class SceneString
+  {
+    public string Data;
+    public static implicit operator string(SceneString d)
+    {
+        return d.Data;
+    }
+  };
+
+
 #if UNITY_EDITOR
   public static partial class NTBUtils
   {
@@ -674,11 +685,31 @@ namespace NTBUtils
       }
       return knownScenes;
     }
-  }
+
+      [CustomPropertyDrawer(typeof(SceneString))]
+      public class SceneStringDrawer : PropertyDrawer
+      {
+          // Draw the property inside the given rect
+          public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+          {
+            SerializedProperty dataProp = property.FindPropertyRelative("Data");
+            string currSelection = dataProp.stringValue;
+
+            List<string> choices = NTBUtils.GetBuildingScenes();
+            int panelChoice = choices.IndexOf(currSelection);
+            if (panelChoice < 0)
+            {
+              panelChoice = 0;
+            }
+            panelChoice = EditorGUI.Popup(position, property.displayName, panelChoice, choices.ToArray());
+            dataProp.stringValue = choices[panelChoice];
+          }
+      }
+    }
 
   public static class NTBGUI
   {
-    public static string SceneSelection(string currSelection, Object target)
+    public static string SceneSelection(string currSelection, Object target = null)
     {
       List<string> choices = NTBUtils.GetBuildingScenes();
 
@@ -688,7 +719,8 @@ namespace NTBUtils
         panelChoice = 0;
       }
       panelChoice = EditorGUILayout.Popup(panelChoice, choices.ToArray());
-      Undo.RecordObject(target, "Changed Scene Selection on " + target.name);
+      if(!target)
+        Undo.RecordObject(target, "Changed Scene Selection on " + target.name);
       return choices[panelChoice];
     }
   }
