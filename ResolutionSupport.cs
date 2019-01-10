@@ -32,69 +32,74 @@ dealings in this Software without prior written authorization.
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct ResolutionPair
+namespace NTBUtils
 {
-  public ResolutionPair(double width, double height)
-  {
-    this.width = width;
-    this.height = height;
-  }
-  public double width;
-  public double height;
-}
-
-public class RPList : List<ResolutionPair>
-{
-  public int Find(int x, int y)
-  {
-    int i = 0;
-    foreach (ResolutionPair resolution in this)
+    public struct ResolutionPair
     {
-      // "close enough"
-      if (Math.Abs(x - resolution.width) < 0.05 &&
-        Math.Abs(y - resolution.height) < 0.05)
-        return i;
-      i ++;
+        public ResolutionPair(double width, double height)
+        {
+            this.width = width;
+            this.height = height;
+        }
+
+        public double width;
+        public double height;
     }
-    return -1;
-  }
-}
 
-public class ResolutionSet
-{
-  public string AspectRatio = "0:0";
-  public double RawRatio = 0.0;
-
-  public ResolutionSet(double width, double height)
-  {
-    this.RawRatio = width / height;
-    this.AspectRatio = "" + width + ":" + height;
-  }
-
-  public RPList GetData()
-  {
-    return this.data;
-  }
-
-  private RPList data = new RPList();
-
-  public void ForceAdd(int x, int y)
-  {
-    this.data.Add(new ResolutionPair(x, y));
-    this.data.Sort(ResolutionSupport.ResolutionSetSort);
-  }
-
-  // An add will fail if the aspect ratio is inappropriate for this ResolutionSet
-  public bool Add(ResolutionPair res)
-  {
-    if (Math.Abs(this.RawRatio - (res.width / res.height)) > 0.05)
+    public class RPList : List<ResolutionPair>
     {
-      return false;
+        public int Find(int x, int y)
+        {
+            int i = 0;
+            foreach (ResolutionPair resolution in this)
+            {
+                // "close enough"
+                if (Math.Abs(x - resolution.width) < 0.05 &&
+                    Math.Abs(y - resolution.height) < 0.05)
+                    return i;
+                i++;
+            }
+
+            return -1;
+        }
     }
-    this.data.Add(res);
-    return true;
-  }
-}
+
+    public class ResolutionSet
+    {
+        public string AspectRatio = "0:0";
+        public double RawRatio = 0.0;
+
+        public ResolutionSet(double width, double height)
+        {
+            this.RawRatio = width / height;
+            this.AspectRatio = "" + width + ":" + height;
+        }
+
+        public RPList GetData()
+        {
+            return this.data;
+        }
+
+        private RPList data = new RPList();
+
+        public void ForceAdd(int x, int y)
+        {
+            this.data.Add(new ResolutionPair(x, y));
+            this.data.Sort(ResolutionSupport.ResolutionSetSort);
+        }
+
+        // An add will fail if the aspect ratio is inappropriate for this ResolutionSet
+        public bool Add(ResolutionPair res)
+        {
+            if (Math.Abs(this.RawRatio - (res.width / res.height)) > 0.05)
+            {
+                return false;
+            }
+
+            this.data.Add(res);
+            return true;
+        }
+    }
 
 // ResolutionSupport.Screens() returns 3 arrays,
 // corresponding to 3 aspect ratios. In order,
@@ -104,62 +109,63 @@ public class ResolutionSet
 // and then call ChangeResolution(int x, int y) using
 // one of the StrippedResolutions returned.
 
-public static class ResolutionSupport
-{
-  public static bool FullScreen = false;
-
-  public static void ChangeResolution(ResolutionPair res)
-  {
-    Screen.SetResolution((int)res.width, (int)res.height, ResolutionSupport.FullScreen);
-  }
-
-  public static void ChangeResolution(int x, int y)
-  {
-    Screen.SetResolution(x, y, ResolutionSupport.FullScreen);
-  }
-
-  public static int ResolutionSetSort(ResolutionPair x, ResolutionPair y)
-  {
-    if (x.width < y.width) return -1;
-    else if (x.height < y.height) return -1;
-    else return 0;
-  }
-
-  public static ResolutionSet[] Screens()
-  {
-    ResolutionSet[] ret = new ResolutionSet[3];
-    Resolution[] allData = Screen.resolutions;
-
-    // Find and rewrite legal resolutions
-    List<ResolutionPair> resolutions = new List<ResolutionPair>();
-    foreach (Resolution res in allData)
+    public static class ResolutionSupport
     {
-      ResolutionPair entry =
-        new ResolutionPair(res.width, res.height);
-      if (!resolutions.Contains(entry))
-        resolutions.Add(entry);
-    }
+        public static bool FullScreen = false;
 
-    // Separate by aspect ratios
-    ResolutionSet fourVthree = new ResolutionSet(4, 3);
-    ResolutionSet sixteenVnine = new ResolutionSet(16, 9);
-    ResolutionSet sixteenVten = new ResolutionSet(16, 10);
-    foreach (var res in resolutions)
-    {
-      // strip small and semi-illegal resolutions
-      if (res.width < 800) continue;
-      if (fourVthree.Add(res) || sixteenVnine.Add(res) || sixteenVten.Add(res)) continue;
-    }
+        public static void ChangeResolution(ResolutionPair res)
+        {
+            Screen.SetResolution((int) res.width, (int) res.height, ResolutionSupport.FullScreen);
+        }
 
-    // Sort by ascending width and ascending height
-    ret[0] = fourVthree;
-    ret[1] = sixteenVnine;
-    ret[2] = sixteenVten;
-    foreach (var set in ret)
-    {
-      set.GetData().Sort(ResolutionSetSort);
-    }
+        public static void ChangeResolution(int x, int y)
+        {
+            Screen.SetResolution(x, y, ResolutionSupport.FullScreen);
+        }
 
-    return ret;
-  }
+        public static int ResolutionSetSort(ResolutionPair x, ResolutionPair y)
+        {
+            if (x.width < y.width) return -1;
+            else if (x.height < y.height) return -1;
+            else return 0;
+        }
+
+        public static ResolutionSet[] Screens()
+        {
+            ResolutionSet[] ret = new ResolutionSet[3];
+            Resolution[] allData = Screen.resolutions;
+
+            // Find and rewrite legal resolutions
+            List<ResolutionPair> resolutions = new List<ResolutionPair>();
+            foreach (Resolution res in allData)
+            {
+                ResolutionPair entry =
+                    new ResolutionPair(res.width, res.height);
+                if (!resolutions.Contains(entry))
+                    resolutions.Add(entry);
+            }
+
+            // Separate by aspect ratios
+            ResolutionSet fourVthree = new ResolutionSet(4, 3);
+            ResolutionSet sixteenVnine = new ResolutionSet(16, 9);
+            ResolutionSet sixteenVten = new ResolutionSet(16, 10);
+            foreach (var res in resolutions)
+            {
+                // strip small and semi-illegal resolutions
+                if (res.width < 800) continue;
+                if (fourVthree.Add(res) || sixteenVnine.Add(res) || sixteenVten.Add(res)) continue;
+            }
+
+            // Sort by ascending width and ascending height
+            ret[0] = fourVthree;
+            ret[1] = sixteenVnine;
+            ret[2] = sixteenVten;
+            foreach (var set in ret)
+            {
+                set.GetData().Sort(ResolutionSetSort);
+            }
+
+            return ret;
+        }
+    }
 }

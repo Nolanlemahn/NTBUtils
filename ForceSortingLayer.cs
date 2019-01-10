@@ -31,11 +31,11 @@ dealings in this Software without prior written authorization.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using NTBU = NTBUtils.UsingUtils;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-[NTBUtils.OverrideExecOrder(-101)]
 [ExecuteInEditMode]
 public class ForceSortingLayer : MonoBehaviour
 {
@@ -57,7 +57,7 @@ public class ForceSortingLayer : MonoBehaviour
   public void ChangeLayer(string layer)
   {
     this.newLayer = layer;
-    NTBUtils.ForRecursive(this.gameObject, this.ObjChangeLayer, false);
+    NTBU.ForRecursive(this.gameObject, this.ObjChangeLayer, false);
   }
 
   void ObjChangeLayer(Transform child)

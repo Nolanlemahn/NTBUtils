@@ -29,11 +29,9 @@ dealings in this Software without prior written authorization.
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using UnityEngine;
+using NTBUtils;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -74,14 +72,14 @@ public class MethodFieldDrawer : PropertyDrawer
     this.numLines = methodField.Count + 1;
 
     position.height /= numLines;
-    EditorGUI.LabelField(position, $"{label.text}", EditorStyles.centeredGreyMiniLabel);
+    EditorGUI.LabelField(position, string.Format("{0}", label.text), EditorStyles.centeredGreyMiniLabel);
     position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
     try
     {
       foreach (var method in methodField)
       {
-        if (GUI.Button(position, $"{method.Method.Name}()"))
+        if (GUI.Button(position, string.Format("{0}()", method.Method.Name)))
         {
           method.Invoke();
         }

@@ -28,101 +28,104 @@ shall not be used in advertising or otherwise to promote the sale, use or other
 dealings in this Software without prior written authorization.
 */
 
-using System;
-
-public class ZTimer
+namespace NTBUtils
 {
-  private bool Ticking = false;
-  public float StartAt;
-  private float remainder;
-
-  public delegate void ZTWhenDone();
-
-  private ZTWhenDone del = null;
-
-  public ZTimer() {}
-  public ZTimer(float startTime)
+  public class ZTimer
   {
-    this.Start(startTime);
-  }
+    private bool Ticking = false;
+    public float StartAt;
+    private float remainder;
 
-  public void Tick(float dt)
-  {
-    if (this.Ticking && this.remainder > 0.0)
+    public delegate void ZTWhenDone();
+
+    private ZTWhenDone del = null;
+
+    public ZTimer()
     {
-      this.remainder = this.remainder - dt;
     }
-    if (this.remainder <= 0)
+
+    public ZTimer(float startTime)
     {
-      if (this.del != null)
+      this.Start(startTime);
+    }
+
+    public void Tick(float dt)
+    {
+      if (this.Ticking && this.remainder > 0.0)
       {
-        this.del();
+        this.remainder = this.remainder - dt;
+      }
+      if (this.remainder <= 0)
+      {
+        if (this.del != null)
+        {
+          this.del();
+        }
       }
     }
-  }
 
-  public void DoWhenDone(ZTWhenDone func)
-  {
-    this.del = func;
-  }
-
-  public float Remaining()
-  {
-    return this.remainder;
-  }
-
-  public float Elapsed()
-  {
-    return (this.StartAt - this.remainder);
-  }
-
-  public void Start(float time)
-  {
-    this.StartAt = time;
-    this.remainder = time;
-    this.Ticking = true;
-  }
-
-  public void Extend(float time)
-  {
-    if (!this.Ticking)
+    public void DoWhenDone(ZTWhenDone func)
     {
-      this.Start(time);
-      return;
+      this.del = func;
     }
-    this.remainder += time;
-    this.StartAt += time;
-  }
 
-  public void Reset()
-  {
-    this.remainder = this.StartAt;
-    this.Ticking = true;
-  }
+    public float Remaining()
+    {
+      return this.remainder;
+    }
 
-  public void Stop()
-  {
-    this.Ticking = false;
-  }
+    public float Elapsed()
+    {
+      return (this.StartAt - this.remainder);
+    }
 
-  public bool Running()
-  {
-    return this.Ticking;
-  }
+    public void Start(float time)
+    {
+      this.StartAt = time;
+      this.remainder = time;
+      this.Ticking = true;
+    }
 
-  public bool DoneOrNotTicking()
-  {
-    return (!this.Ticking || this.remainder <= 0);
+    public void Extend(float time)
+    {
+      if (!this.Ticking)
+      {
+        this.Start(time);
+        return;
+      }
+      this.remainder += time;
+      this.StartAt += time;
+    }
 
-  }
+    public void Reset()
+    {
+      this.remainder = this.StartAt;
+      this.Ticking = true;
+    }
 
-  public bool Done()
-  {
-    if (this.Ticking && this.remainder <= 0)
+    public void Stop()
     {
       this.Ticking = false;
-      return true;
     }
-    return false;
+
+    public bool Running()
+    {
+      return this.Ticking;
+    }
+
+    public bool DoneOrNotTicking()
+    {
+      return (!this.Ticking || this.remainder <= 0);
+    }
+
+    public bool Done()
+    {
+      if (this.Ticking && this.remainder <= 0)
+      {
+        this.Ticking = false;
+        return true;
+      }
+      return false;
+    }
   }
 }
