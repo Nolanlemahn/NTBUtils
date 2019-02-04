@@ -37,6 +37,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -778,7 +779,6 @@ namespace NTBUtils
         {
           if (c == null)
           {
-            //NTBUtils.Log("ping");
             selection.Add(t.gameObject);
             break;
           }
@@ -800,6 +800,33 @@ namespace NTBUtils
           if (m != null && m.sharedMaterial == null)
           {
             selection.Add(t.gameObject);
+          }
+        }
+      }
+      Selection.objects = selection.ToArray();
+    }
+
+    [MenuItem("Tools/NTBUtils/Show All Text")]
+    static void ShowMissingText()
+    {
+      GameObject[] allMRootGameObjects = EditorSceneManager.GetActiveScene().GetRootGameObjects();
+      List<Transform> ts = new List<Transform>();
+      foreach (GameObject gameObject in allMRootGameObjects)
+      {
+        ts.AddRange(gameObject.GetComponentsInChildren<Transform>(true));
+      }
+      List<GameObject> selection = new List<GameObject>();
+      foreach (Transform t in ts)
+      {
+        // even if the components are different, this will still work for missing ones
+        Text[] cs = t.gameObject.GetComponents<Text>();
+        foreach (Text c in cs)
+        {
+          if (c != null)
+          {
+            //NTBUtils.Log("ping");
+            selection.Add(t.gameObject);
+            break;
           }
         }
       }
